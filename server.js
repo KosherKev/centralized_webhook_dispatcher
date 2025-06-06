@@ -271,7 +271,7 @@ app.post('/admin/test-webhook/:systemName', async (req, res) => {
 // ==============================================
 app.listen(PORT, () => {
     console.log(`🚀 Webhook Dispatcher running on port ${PORT}`);
-    console.log(`📥 Paystack webhook URL: http://localhost:${PORT}/webhooks/paystack`);
+    console.log(`📥 Paystack webhook URL: http://centralized-webhook-dispatcher.onrender.com/webhooks/paystack`);
     console.log(`🎫 Managing ${TICKETING_SYSTEMS.length} ticketing systems`);
 });
 

@@ -4,6 +4,7 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
+import logger from './logger.js'; // Custom logger module
 import { v4 as uuidv4 } from 'uuid';
 
 dotenv.config();
@@ -699,14 +700,11 @@ app.listen(PORT, () => {
         port: PORT,
         environment: process.env.NODE_ENV,
         systems_count: TICKETING_SYSTEMS.length,
-        log_level: process.env.LOG_LEVEL || 'info',
-        webhook_url: `http://localhost:${PORT}/webhooks/paystack`
+        log_level: process.env.LOG_LEVEL || 'info'
     });
     
     console.log(`🚀 Webhook Dispatcher running on port ${PORT}`);
-    console.log(`📥 Paystack webhook URL: http://localhost:${PORT}/webhooks/paystack`);
     console.log(`🎫 Managing ${TICKETING_SYSTEMS.length} ticketing systems`);
-    console.log(`📝 Logs directory: ${logsDir}`);
 });
 
 // ==============================================

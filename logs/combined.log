@@ -1,0 +1,118 @@
+2025-06-10 22:37:29 [INFO]: Webhook Dispatcher initialized
+{
+  "service": "webhook-dispatcher",
+  "version": "1.0.0",
+  "environment": "development",
+  "type": "system_startup",
+  "systems_count": 2,
+  "systems": [
+    {
+      "id": "cbs-ticketing",
+      "name": "CBS Ticketing",
+      "enabled": true
+    },
+    {
+      "name": "MMV Ticketing",
+      "enabled": true
+    }
+  ]
+}
+2025-06-10 22:37:29 [INFO]: Webhook Dispatcher started successfully
+{
+  "service": "webhook-dispatcher",
+  "version": "1.0.0",
+  "environment": "production",
+  "type": "server_startup",
+  "port": "3001",
+  "systems_count": 2,
+  "log_level": "info",
+  "webhook_url": "http://localhost:3001/webhooks/paystack"
+}
+2025-06-10 22:37:44 [INFO]: Webhook Dispatcher initialized
+{
+  "service": "webhook-dispatcher",
+  "version": "1.0.0",
+  "environment": "development",
+  "type": "system_startup",
+  "systems_count": 2,
+  "systems": [
+    {
+      "id": "cbs-ticketing",
+      "name": "CBS Ticketing",
+      "enabled": true
+    },
+    {
+      "name": "MMV Ticketing",
+      "enabled": true
+    }
+  ]
+}
+2025-06-10 22:37:44 [INFO]: Webhook Dispatcher started successfully
+{
+  "service": "webhook-dispatcher",
+  "version": "1.0.0",
+  "environment": "production",
+  "type": "server_startup",
+  "port": "3001",
+  "systems_count": 2,
+  "log_level": "info",
+  "webhook_url": "http://localhost:3001/webhooks/paystack"
+}
+2025-06-10 22:38:08 [INFO]: Webhook Dispatcher initialized
+{
+  "service": "webhook-dispatcher",
+  "version": "1.0.0",
+  "environment": "development",
+  "type": "system_startup",
+  "systems_count": 2,
+  "systems": [
+    {
+      "id": "cbs-ticketing",
+      "name": "CBS Ticketing",
+      "enabled": true
+    },
+    {
+      "name": "MMV Ticketing",
+      "enabled": true
+    }
+  ]
+}
+2025-06-10 22:38:08 [INFO]: Webhook Dispatcher started successfully
+{
+  "service": "webhook-dispatcher",
+  "version": "1.0.0",
+  "environment": "production",
+  "type": "server_startup",
+  "port": "3001",
+  "systems_count": 2,
+  "log_level": "info"
+}
+2025-06-10 22:38:10 [INFO]: Webhook Dispatcher initialized
+{
+  "service": "webhook-dispatcher",
+  "version": "1.0.0",
+  "environment": "development",
+  "type": "system_startup",
+  "systems_count": 2,
+  "systems": [
+    {
+      "id": "cbs-ticketing",
+      "name": "CBS Ticketing",
+      "enabled": true
+    },
+    {
+      "name": "MMV Ticketing",
+      "enabled": true
+    }
+  ]
+}
+2025-06-10 22:38:10 [INFO]: Webhook Dispatcher started successfully
+{
+  "service": "webhook-dispatcher",
+  "version": "1.0.0",
+  "environment": "production",
+  "type": "server_startup",
+  "port": "3001",
+  "systems_count": 2,
+  "log_level": "info"
+}

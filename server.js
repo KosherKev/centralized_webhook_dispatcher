@@ -441,11 +441,7 @@ app.get('/health', async (req, res) => {
             
             try {
                 logger.debug('Checking system health', {
-                    type: 'system_health_check',
-                    requestId,
-                    system_id: system.id,
-                    system_name: system.name,
-                    health_url: `${system.baseUrl}${system.healthCheck}`
+                    type: 'system_health_check'
                 });
 
                 const response = await axios.get(
@@ -456,12 +452,7 @@ app.get('/health', async (req, res) => {
                 const responseTime = Date.now() - systemHealthStart;
                 
                 logger.debug('System health check completed', {
-                    type: 'system_health_success',
-                    requestId,
-                    system_id: system.id,
-                    system_name: system.name,
-                    response_status: response.status,
-                    response_time_ms: responseTime
+                    type: 'system_health_success'
                 });
 
                 return {
@@ -476,12 +467,7 @@ app.get('/health', async (req, res) => {
                 const responseTime = Date.now() - systemHealthStart;
                 
                 logger.warn('System health check failed', {
-                    type: 'system_health_error',
-                    requestId,
-                    system_id: system.id,
-                    system_name: system.name,
-                    error: error.message,
-                    response_time_ms: responseTime
+                    type: 'system_health_error'
                 });
 
                 return {
@@ -522,9 +508,7 @@ app.get('/health', async (req, res) => {
         total_systems: enabledSystems,
         health_check_time_ms: totalHealthCheckTime
     });
-
     res.json(overallHealth);
-});
 
 // ==============================================
 // 📊 ENHANCED ADMIN ENDPOINTS WITH LOGGING

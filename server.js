@@ -47,11 +47,22 @@ const TICKETING_SYSTEMS = [
         timeout: 30000
     },
     {
+        id: 'mmv-ticketing',
         name: 'MMV Ticketing',
         baseUrl: 'https://api.cuministrymmv.org',
         webhookPath: '/api/webhooks/paystack',
         healthCheck: '/health',
-        enabled: true
+        enabled: true,
+        timeout: 30000
+    },
+    {
+        id: 'mmv-voting',
+        name: 'MMV Voting',
+        baseUrl: 'https://api.nominations.cuministrymmv.org',
+        webhookPath: '/api/webhooks/paystack',
+        healthCheck: '/health',
+        enabled: true,
+        timeout: 30000
     }
 ];
 

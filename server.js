@@ -430,7 +430,11 @@ app.get('/health', async (req, res) => {
             
             try {
                 logger.debug('Checking system health', {
-                    type: 'system_health_check'
+                    type: 'system_health_check',
+                    requestId,
+                    system_id: system.id,
+                    system_name: system.name,
+                    health_url: `${system.baseUrl}${system.healthCheck}`
                 });
 
                 const response = await axios.get(
@@ -441,7 +445,12 @@ app.get('/health', async (req, res) => {
                 const responseTime = Date.now() - systemHealthStart;
                 
                 logger.debug('System health check completed', {
-                    type: 'system_health_success'
+                    type: 'system_health_success',
+                    requestId,
+                    system_id: system.id,
+                    system_name: system.name,
+                    response_status: response.status,
+                    response_time_ms: responseTime
                 });
 
                 return {
@@ -456,7 +465,12 @@ app.get('/health', async (req, res) => {
                 const responseTime = Date.now() - systemHealthStart;
                 
                 logger.warn('System health check failed', {
-                    type: 'system_health_error'
+                    type: 'system_health_error',
+                    requestId,
+                    system_id: system.id,
+                    system_name: system.name,
+                    error: error.message,
+                    response_time_ms: responseTime
                 });
 
                 return {
@@ -491,7 +505,11 @@ app.get('/health', async (req, res) => {
     };
 
     logger.info('Health check completed', {
-        type: 'health_check_complete'
+        type: 'health_check_complete',
+        requestId,
+        healthy_systems: healthySystems,
+        total_systems: enabledSystems,
+        health_check_time_ms: totalHealthCheckTime
     });
 
     res.json(overallHealth);

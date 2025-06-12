@@ -509,7 +509,8 @@ app.get('/health', async (req, res) => {
         health_check_time_ms: totalHealthCheckTime
     });
     res.json(overallHealth);
-
+});
+    
 // ==============================================
 // 📊 ENHANCED ADMIN ENDPOINTS WITH LOGGING
 // ==============================================

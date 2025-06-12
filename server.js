@@ -38,6 +38,15 @@ app.use(express.json());
 // ==============================================
 const TICKETING_SYSTEMS = [
     {
+        id: 'cbs-ticketing',
+        name: 'CBS Ticketing',
+        baseUrl: process.env.CBS_BASE_URL || 'https://cbs-ticketing.com',
+        webhookPath: '/api/webhooks/paystack',
+        healthCheck: '/health',
+        enabled: true,
+        timeout: 30000
+    },
+    {
         name: 'MMV Ticketing',
         baseUrl: 'https://api.cuministrymmv.org',
         webhookPath: '/api/webhooks/paystack',
@@ -421,11 +430,7 @@ app.get('/health', async (req, res) => {
             
             try {
                 logger.debug('Checking system health', {
-                    type: 'system_health_check',
-                    requestId,
-                    system_id: system.id,
-                    system_name: system.name,
-                    health_url: `${system.baseUrl}${system.healthCheck}`
+                    type: 'system_health_check'
                 });
 
                 const response = await axios.get(
@@ -436,12 +441,7 @@ app.get('/health', async (req, res) => {
                 const responseTime = Date.now() - systemHealthStart;
                 
                 logger.debug('System health check completed', {
-                    type: 'system_health_success',
-                    requestId,
-                    system_id: system.id,
-                    system_name: system.name,
-                    response_status: response.status,
-                    response_time_ms: responseTime
+                    type: 'system_health_success'
                 });
 
                 return {
@@ -456,12 +456,7 @@ app.get('/health', async (req, res) => {
                 const responseTime = Date.now() - systemHealthStart;
                 
                 logger.warn('System health check failed', {
-                    type: 'system_health_error',
-                    requestId,
-                    system_id: system.id,
-                    system_name: system.name,
-                    error: error.message,
-                    response_time_ms: responseTime
+                    type: 'system_health_error'
                 });
 
                 return {
@@ -496,11 +491,7 @@ app.get('/health', async (req, res) => {
     };
 
     logger.info('Health check completed', {
-        type: 'health_check_complete',
-        requestId,
-        healthy_systems: healthySystems,
-        total_systems: enabledSystems,
-        health_check_time_ms: totalHealthCheckTime
+        type: 'health_check_complete'
     });
 
     res.json(overallHealth);

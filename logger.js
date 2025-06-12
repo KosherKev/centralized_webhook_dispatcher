@@ -65,12 +65,16 @@ const logger = winston.createLogger({
             )
         }),
         
-        // Console output
+        // Console output (exclude health checks)
         new winston.transports.Console({
             format: winston.format.combine(
                 winston.format.colorize(),
                 winston.format.simple()
-            )
+            ),
+            level: process.env.LOG_LEVEL || 'info',
+            silent: false,
+            handleExceptions: true,
+            filter: (info) => info.type !== 'system_health_check' // Exclude health check logs
         })
     ]
 });

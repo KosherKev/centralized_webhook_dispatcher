@@ -38,15 +38,6 @@ app.use(express.json());
 // ==============================================
 const TICKETING_SYSTEMS = [
     {
-        id: 'cbs-ticketing',
-        name: 'CBS Ticketing',
-        baseUrl: process.env.CBS_BASE_URL || 'https://cbs-ticketing.com',
-        webhookPath: '/api/webhooks/paystack',
-        healthCheck: '/health',
-        enabled: true,
-        timeout: 30000
-    },
-    {
         name: 'MMV Ticketing',
         baseUrl: 'https://api.cuministrymmv.org',
         webhookPath: '/api/webhooks/paystack',

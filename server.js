@@ -237,11 +237,14 @@ app.post('/webhooks/paystack', async (req, res) => {
 // ==============================================
 // 🔍 ENHANCED FIND TARGET SYSTEM WITH LOGGING
 // ==============================================
-async function findTargetSystem(paymentReference, requestId) {
+
+// Updated findTargetSystem with better handling of payment statuses
+async function findTargetSystemWithImprovedLogic(paymentReference, webhookEvent, requestId) {
     logger.info('Starting system discovery', {
         type: 'system_discovery_start',
         requestId,
         reference: paymentReference,
+        webhook_event: webhookEvent,
         systems_to_check: TICKETING_SYSTEMS.filter(s => s.enabled).length
     });
     
@@ -256,58 +259,64 @@ async function findTargetSystem(paymentReference, requestId) {
                     requestId,
                     system_id: system.id,
                     system_name: system.name,
-                    reference: paymentReference,
-                    check_url: `${system.baseUrl}/api/tickets/verify/${paymentReference}`
+                    reference: paymentReference
                 });
                 
                 const response = await axios.get(
                     `${system.baseUrl}/api/tickets/verify/${paymentReference}`,
                     { 
                         timeout: system.timeout || 5000,
-                        validateStatus: (status) => status < 500
+                        validateStatus: (status) => status < 500 // Accept 200, 400, 404
                     }
                 );
 
                 const checkTime = Date.now() - systemStartTime;
 
-                logger.debug('System check completed', {
-                    type: 'system_check_complete',
-                    requestId,
-                    system_id: system.id,
-                    system_name: system.name,
-                    reference: paymentReference,
-                    response_status: response.status,
-                    response_time_ms: checkTime,
-                    found: response.status === 200 || (response.status === 400 && response.data?.data?.ticket)
-                });
-
-                // If found (200) or payment exists but not verified yet (400)
-                if (response.status === 200 || 
-                    (response.status === 400 && response.data?.data?.ticket)) {
+                if (response.status === 200) {
+                    // System found and handled the reference (success or failure)
+                    const paymentStatus = response.data?.data?.paymentStatus;
                     
-                    logger.info('Payment reference found in system', {
+                    logger.info('Payment reference found and handled by system', {
                         type: 'system_discovery_success',
                         requestId,
                         system_id: system.id,
                         system_name: system.name,
                         reference: paymentReference,
-                        response_status: response.status,
+                        payment_status: paymentStatus,
+                        webhook_event: webhookEvent,
                         response_time_ms: checkTime
                     });
                     
                     return system;
                 }
+                
+                if (response.status === 404) {
+                    // System doesn't have this reference - continue searching
+                    logger.debug('Payment reference not found in system', {
+                        type: 'system_check_not_found',
+                        requestId,
+                        system_id: system.id,
+                        system_name: system.name,
+                        reference: paymentReference,
+                        response_time_ms: checkTime
+                    });
+                    
+                    return null;
+                }
 
-                logger.debug('Payment reference not found in system', {
-                    type: 'system_check_not_found',
+                // For any other 4xx status, log and continue
+                logger.debug('System returned non-success status', {
+                    type: 'system_check_other_status',
                     requestId,
                     system_id: system.id,
                     system_name: system.name,
                     reference: paymentReference,
-                    response_status: response.status
+                    response_status: response.status,
+                    response_time_ms: checkTime
                 });
 
                 return null;
+
             } catch (error) {
                 const checkTime = Date.now() - systemStartTime;
                 
@@ -319,8 +328,7 @@ async function findTargetSystem(paymentReference, requestId) {
                     reference: paymentReference,
                     error: error.message,
                     error_code: error.code,
-                    response_time_ms: checkTime,
-                    timeout: system.timeout
+                    response_time_ms: checkTime
                 });
                 
                 return null;
@@ -336,13 +344,14 @@ async function findTargetSystem(paymentReference, requestId) {
             requestId,
             reference: paymentReference,
             found_system: foundSystem.id,
-            checked_systems: TICKETING_SYSTEMS.filter(s => s.enabled).length
+            webhook_event: webhookEvent
         });
     } else {
         logger.warn('System discovery failed - no system found', {
             type: 'system_discovery_failed',
             requestId,
             reference: paymentReference,
+            webhook_event: webhookEvent,
             checked_systems: TICKETING_SYSTEMS.filter(s => s.enabled).map(s => s.id)
         });
     }

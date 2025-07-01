@@ -150,7 +150,7 @@ app.post('/webhooks/paystack', async (req, res) => {
         });
 
         // Find which ticketing system has this payment reference
-        const targetSystem = await findTargetSystem(paymentReference, requestId);
+        const targetSystem = await findTargetSystemWithImprovedLogic(paymentReference, requestId);
 
         if (!targetSystem) {
             logger.warn('No system found for payment reference', {

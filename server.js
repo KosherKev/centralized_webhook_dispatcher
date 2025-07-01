@@ -37,15 +37,15 @@ app.use(express.json());
 // 🎫 TICKETING SYSTEMS REGISTRY WITH LOGGING
 // ==============================================
 const TICKETING_SYSTEMS = [
-    // {
-    //     id: 'cbs-ticketing',
-    //     name: 'CBS Ticketing',
-    //     baseUrl: process.env.CBS_BASE_URL || 'https://cbs-ticketing.com',
-    //     webhookPath: '/api/webhooks/paystack',
-    //     healthCheck: '/health',
-    //     enabled: true,
-    //     timeout: 30000
-    // },
+    {
+        id: 'cunsa-nominations',
+        name: 'CUNSA Nominations',
+        baseUrl: 'https://api.cunsanominations.eticketzgh.com',
+        webhookPath: '/api/webhooks/paystack',
+        healthCheck: '/health',
+        enabled: true,
+        timeout: 30000
+    },
     {
         id: 'cunsa-ticketing',
         name: 'CUNSA Ticketing',

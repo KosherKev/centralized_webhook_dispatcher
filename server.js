@@ -21,13 +21,29 @@ app.use((req, res, next) => {
 
 app.use(cors());
 
+// Skip logging for health and metrics routes
+app.use((req, res, next) => {
+    if (
+        req.path === '/health' ||
+        req.path === '/admin/metrics'
+    ) {
+        req._skipLogging = true;
+    }
+    next();
+});
+
 // Enhanced Morgan logging
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :response-time ms', {
     stream: {
-        write: (message) => logger.info('HTTP Request', { 
-            type: 'http_request',
-            message: message.trim()
-        })
+        write: (message, req) => {
+            // Only log if not a health/metrics route
+            if (!req || !req._skipLogging) {
+                logger.info('HTTP Request', { 
+                    type: 'http_request',
+                    message: message.trim()
+                });
+            }
+        }
     }
 }));
 
@@ -436,34 +452,19 @@ async function forwardWebhook(targetSystem, webhookBody, originalHeaders, reques
 // 🏥 ENHANCED HEALTH CHECK WITH LOGGING
 // ==============================================
 app.get('/health', async (req, res) => {
+    // No logging here
     const requestId = req.id;
     const healthCheckStart = Date.now();
-    
-    logger.info('Health check initiated', {
-        type: 'health_check_start',
-        requestId
-    });
 
     const systemStatuses = await Promise.all(
         TICKETING_SYSTEMS.map(async (system) => {
             const systemHealthStart = Date.now();
-            
             try {
-                logger.debug('Checking system health', {
-                    type: 'system_health_check'
-                });
-
                 const response = await axios.get(
                     `${system.baseUrl}${system.healthCheck}`,
                     { timeout: 5000 }
                 );
-                
                 const responseTime = Date.now() - systemHealthStart;
-                
-                logger.debug('System health check completed', {
-                    type: 'system_health_success'
-                });
-
                 return {
                     id: system.id,
                     name: system.name,
@@ -474,11 +475,6 @@ app.get('/health', async (req, res) => {
                 };
             } catch (error) {
                 const responseTime = Date.now() - systemHealthStart;
-                
-                logger.warn('System health check failed', {
-                    type: 'system_health_error'
-                });
-
                 return {
                     id: system.id,
                     name: system.name,
@@ -510,13 +506,6 @@ app.get('/health', async (req, res) => {
         }
     };
 
-    logger.info('Health check completed', {
-        type: 'health_check_complete',
-        requestId,
-        healthy_systems: healthySystems,
-        total_systems: enabledSystems,
-        health_check_time_ms: totalHealthCheckTime
-    });
     res.json(overallHealth);
 });
     
@@ -671,15 +660,9 @@ app.post('/admin/test-webhook/:systemId', async (req, res) => {
 // ==============================================
 
 app.get('/admin/metrics', (req, res) => {
+    // No logging here
     const requestId = req.id;
-    
-    logger.info('Admin metrics requested', {
-        type: 'admin_metrics_request',
-        requestId,
-        admin_ip: req.ip
-    });
 
-    // Basic metrics - in production, you'd use a proper metrics store
     const metrics = {
         uptime: process.uptime(),
         memory: process.memoryUsage(),
